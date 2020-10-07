@@ -7,7 +7,10 @@
 		{
 			"Name": "CGS_Term2_v1",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
 		}
 	]
 }
