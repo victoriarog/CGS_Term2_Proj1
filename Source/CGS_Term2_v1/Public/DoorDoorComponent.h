@@ -5,35 +5,32 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Curves/CurveFloat.h"
-#include "MyActorComponent.generated.h"
+#include "DoorDoorComponent.generated.h"
 
 
-class ATriggerBox;
-class IConsoleVariable;
-
-UENUM()
-enum class EDoorState
-{
-	DS_Closed = 0 UMETA(DisplayName = "Closeddd"),
-	DS_Open = 1   UMETA(DisplayName = "Come in gurl"),
-	DS_Locked = 2 UMETA(DosplayName = "Needa lil something to open"),
+struct SOverLapInfo {
+	AActor* Actor = nullptr;
+	float DotResult = 0.0f;
 };
 
+class UBoxComponent;
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class CGS_TERM2_V1_API UMyActorComponent : public UActorComponent
+class CGS_TERM2_V1_API UDoorDoorComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	UMyActorComponent();
-
+	UDoorDoorComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	static void OnDebugToggled(IConsoleVariable* Var);
-	void DebugDraw();
-
+	UFUNCTION()
+	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	virtual void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 protected:
 	virtual void BeginPlay() override;
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* BoxComponent;
+	SOverLapInfo OverLapInfo;
 
 	UPROPERTY(EditAnywhere)
 	FRotator DesiredRotation = FRotator::ZeroRotator;
@@ -42,19 +39,15 @@ protected:
 	FRotator FinalRotation = FRotator::ZeroRotator;
 
 	UPROPERTY(EditAnywhere)
-	float TimeToRotate = 1.0f;
+		float TimeToRotate = 1.0f;
 
 	float CurrentRotationTime = 0.0f;
 
 	UPROPERTY(EditAnywhere)
-		ATriggerBox* TriggerBox;
+	FRuntimeFloatCurve OpenCurve;
 
 	UPROPERTY(EditAnywhere)
-		FRuntimeFloatCurve OpenCurve;
-
-	UPROPERTY(BlueprintReadOnly)
-		EDoorState DoorState;
-
-
-		
+	bool IsAnnoying = false;
 };
+
+
